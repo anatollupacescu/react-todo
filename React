@@ -1,18 +1,45 @@
+'use strict' 
+class TodoObject {
+
+	constructor(existingItems) {
+  		if (existingItems) {
+      	this.items = existingItems
+      }
+   }
+   
+   addItem(itemText) { 
+      this.items.push({ text: itemText})
+   } 
+   
+   toggleItemDoneStatus(item) {
+   	let updatedItems = this.items.map(i => {
+    	if (item.text === i.text) {
+      	return { text: i.text, done: !i.done}
+      }
+    	return i
+    })
+    
+    this.items = updatedItems
+   }
+}
+
 class TodoItem extends React.Component {
 
-	checkBox = this.checkBox.bind(this)
-  
-  checkBox(e) {
-  	e.preventDefault()
-  }
-
 	render() {
-    let item = this.props.item;
+
+    let {item, key, onChange} = this.props
+
+	let boxTicked = function() {	
+    	onChange(item)
+    }
+    
+    let className = item.done ? "done" : ""
+    
   	return (
-      <li key={item.id}>
+      <li key={key}>
         <label>
-          <input type="checkbox" readOnly={!item.done} checked={item.done} onChange={this.checkBox} /> 
-          <span className={item.done ? "done" : ""}>{item.text}</span>
+          <input type="checkbox" defaultChecked={item.done} onChange={boxTicked} /> 
+          <span className={className}> {item.text}</span>
         </label>
       </li>
     )
@@ -36,14 +63,26 @@ class TodoForm extends React.Component {
   submitForm(e) {
   	e.preventDefault();
   	if (e.keyCode === 13) { /* Enter key pressed */
-      this.props.addNewItem(this.state.inputValue)
+      this.props.todoObject.addItem(this.state.inputValue)
       this.setState({
         inputValue: ''
       })
     }
   }
   
+  toggleDoneStatus = this.toggleDoneStatus.bind(this)
+  
+  toggleDoneStatus(item) {
+  	if (!this.props.todoObject) {
+    	console.log('panic - no object in props')
+    }
+  	this.props.todoObject.toggleItemDoneStatus(item)
+  }
+  
 	render() {
+  
+  	const { todoObject } = this.props
+    
   	return (
     	<div>
         <h3>New item</h3>
@@ -53,8 +92,8 @@ class TodoForm extends React.Component {
         <div>
           <h2>Todos:</h2>
           <ol>
-          {this.props.items.map((item, id) => (
-            <TodoItem item={item} key={id}/>
+          {todoObject.items.map((item, id) => (
+            <TodoItem key={id} item={item} onChange={this.toggleDoneStatus} />
           ))}
           </ol>
         </div>
@@ -64,35 +103,19 @@ class TodoForm extends React.Component {
 }
 
 class TodoApp extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-    	items: [
-      	{ text: "Learn JavaScript", done: false },
-        { text: "Learn React", done: false },
-        { text: "Play around in JSFiddle", done: true },
-        { text: "Build something awesome", done: true }
-      ]
-    }
-  }
-  
-  addNewItem = this.addNewItem.bind(this);
-  
-  addNewItem(item) {
-    this.setState({
-      items: [
-        ...this.state.items,
-        {text: item},
-      ]
-    })
-  }
   
   render() {
+    const items = [
+      { text: "Learn JavaScript", done: false },
+      { text: "Learn React", done: false },
+      { text: "Play around in JSFiddle", done: true },
+      { text: "Build something awesome", done: true }
+    ]
+  	const todoObject = new TodoObject(items)
     return (
-      <TodoForm addNewItem={this.addNewItem} items={this.state.items} />
+      <TodoForm todoObject={todoObject} />
     )
   }
 }
 
 ReactDOM.render(<TodoApp />, document.querySelector("#app"))
-
