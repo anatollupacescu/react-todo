@@ -10,7 +10,7 @@ class TodoObject {
    
    addItem(itemText) { 
       this.items.push({ text: itemText})
-   } 
+   }
    
    toggleItemDoneStatus(item) {
     let updatedItems = this.items.map(i => {
@@ -25,21 +25,25 @@ class TodoObject {
 }
 
 class TodoItem extends React.Component {
-
+  
+  boxTicked = this.boxTicked.bind(this)
+  
+  boxTicked() {
+    let {todoObject, item, triggerRender} = this.props
+    todoObject.toggleItemDoneStatus(item)
+    triggerRender()
+  }
+  
   render() {
 
     let {item, key, todoObject} = this.props
 
-    let boxTicked = function() {
-      todoObject.toggleItemDoneStatus(item)
-    }
-    
     let className = item.done ? "done" : ""
     
     return (
       <li key={key}>
         <label>
-          <input type="checkbox" defaultChecked={item.done} onChange={boxTicked} /> 
+          <input type="checkbox" defaultChecked={item.done} onChange={this.boxTicked} /> 
           <span className={className}>{item.text}</span>
         </label>
       </li>
@@ -52,8 +56,6 @@ class TodoForm extends React.Component {
   state = { inputValue: ""}
   
   handleChange = this.handleChange.bind(this)
-  submitForm = this.submitForm.bind(this)
-  
   handleChange(e) {
     e.preventDefault();
     this.setState({
@@ -61,20 +63,26 @@ class TodoForm extends React.Component {
     })
   }
   
+  submitForm = this.submitForm.bind(this)
   submitForm(e) {
     e.preventDefault();
     if (e.keyCode === 13) { /* Enter key pressed */
       this.props.todoObject.addItem(this.state.inputValue)
-      this.setState({
+       this.setState({
         inputValue: ''
       })
     }
   }
   
+  triggerRender = this.triggerRender.bind(this)
+  triggerRender() {
+    this.setState(this.state)
+  }
+  
   render() {
   
     const { todoObject } = this.props
-    
+  
     return (
       <div>
         <h3>New item</h3>
@@ -85,7 +93,7 @@ class TodoForm extends React.Component {
           <h2>Todos:</h2>
           <ol>
           {todoObject.items.map((item, id) => (
-            <TodoItem key={id} item={item} todoObject={todoObject} />
+            <TodoItem key={id} item={item} todoObject={todoObject} triggerRender={this.triggerRender}/>
           ))}
           </ol>
         </div>
