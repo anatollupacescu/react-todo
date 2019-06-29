@@ -1,10 +1,11 @@
 'use strict' 
 class TodoObject {
 
-	constructor(existingItems) {
-  		if (existingItems) {
-      	this.items = existingItems
-      }
+  constructor(existingItems) {
+    this.items = []
+    if (existingItems) {
+      this.items = existingItems
+    }
    }
    
    addItem(itemText) { 
@@ -12,11 +13,11 @@ class TodoObject {
    } 
    
    toggleItemDoneStatus(item) {
-   	let updatedItems = this.items.map(i => {
-    	if (item.text === i.text) {
-      	return { text: i.text, done: !i.done}
+    let updatedItems = this.items.map(i => {
+      if (item.text === i.text) {
+        return { text: i.text, done: !i.done}
       }
-    	return i
+      return i
     })
     
     this.items = updatedItems
@@ -25,21 +26,21 @@ class TodoObject {
 
 class TodoItem extends React.Component {
 
-	render() {
+  render() {
 
-    let {item, key, onChange} = this.props
+    let {item, key, todoObject} = this.props
 
-	let boxTicked = function() {	
-    	onChange(item)
+    let boxTicked = function() {
+      todoObject.toggleItemDoneStatus(item)
     }
     
     let className = item.done ? "done" : ""
     
-  	return (
+    return (
       <li key={key}>
         <label>
           <input type="checkbox" defaultChecked={item.done} onChange={boxTicked} /> 
-          <span className={className}> {item.text}</span>
+          <span className={className}>{item.text}</span>
         </label>
       </li>
     )
@@ -48,21 +49,21 @@ class TodoItem extends React.Component {
 
 class TodoForm extends React.Component {
 
-	state = { inputValue: ""}
+  state = { inputValue: ""}
   
   handleChange = this.handleChange.bind(this)
   submitForm = this.submitForm.bind(this)
   
   handleChange(e) {
-  	e.preventDefault();
+    e.preventDefault();
     this.setState({
       inputValue: e.target.value
     })
   }
   
   submitForm(e) {
-  	e.preventDefault();
-  	if (e.keyCode === 13) { /* Enter key pressed */
+    e.preventDefault();
+    if (e.keyCode === 13) { /* Enter key pressed */
       this.props.todoObject.addItem(this.state.inputValue)
       this.setState({
         inputValue: ''
@@ -70,21 +71,12 @@ class TodoForm extends React.Component {
     }
   }
   
-  toggleDoneStatus = this.toggleDoneStatus.bind(this)
+  render() {
   
-  toggleDoneStatus(item) {
-  	if (!this.props.todoObject) {
-    	console.log('panic - no object in props')
-    }
-  	this.props.todoObject.toggleItemDoneStatus(item)
-  }
-  
-	render() {
-  
-  	const { todoObject } = this.props
+    const { todoObject } = this.props
     
-  	return (
-    	<div>
+    return (
+      <div>
         <h3>New item</h3>
         <div>
           <input type="text" onKeyUp={this.submitForm} onChange={this.handleChange} value={this.state.inputValue} />
@@ -93,7 +85,7 @@ class TodoForm extends React.Component {
           <h2>Todos:</h2>
           <ol>
           {todoObject.items.map((item, id) => (
-            <TodoItem key={id} item={item} onChange={this.toggleDoneStatus} />
+            <TodoItem key={id} item={item} todoObject={todoObject} />
           ))}
           </ol>
         </div>
@@ -111,7 +103,7 @@ class TodoApp extends React.Component {
       { text: "Play around in JSFiddle", done: true },
       { text: "Build something awesome", done: true }
     ]
-  	const todoObject = new TodoObject(items)
+    const todoObject = new TodoObject(items)
     return (
       <TodoForm todoObject={todoObject} />
     )
