@@ -1,0 +1,98 @@
+class TodoItem extends React.Component {
+
+	checkBox = this.checkBox.bind(this)
+  
+  checkBox(e) {
+  	e.preventDefault()
+  }
+
+	render() {
+    let item = this.props.item;
+  	return (
+      <li key={item.id}>
+        <label>
+          <input type="checkbox" readOnly={!item.done} checked={item.done} onChange={this.checkBox} /> 
+          <span className={item.done ? "done" : ""}>{item.text}</span>
+        </label>
+      </li>
+    )
+  }
+}
+
+class TodoForm extends React.Component {
+
+	state = { inputValue: ""}
+  
+  handleChange = this.handleChange.bind(this)
+  submitForm = this.submitForm.bind(this)
+  
+  handleChange(e) {
+  	e.preventDefault();
+    this.setState({
+      inputValue: e.target.value
+    })
+  }
+  
+  submitForm(e) {
+  	e.preventDefault();
+  	if (e.keyCode === 13) { /* Enter key pressed */
+      this.props.addNewItem(this.state.inputValue)
+      this.setState({
+        inputValue: ''
+      })
+    }
+  }
+  
+	render() {
+  	return (
+    	<div>
+        <h3>New item</h3>
+        <div>
+          <input type="text" onKeyUp={this.submitForm} onChange={this.handleChange} value={this.state.inputValue} />
+        </div>
+        <div>
+          <h2>Todos:</h2>
+          <ol>
+          {this.props.items.map((item, id) => (
+            <TodoItem item={item} key={id}/>
+          ))}
+          </ol>
+        </div>
+      </div>
+    )
+  }
+}
+
+class TodoApp extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+    	items: [
+      	{ text: "Learn JavaScript", done: false },
+        { text: "Learn React", done: false },
+        { text: "Play around in JSFiddle", done: true },
+        { text: "Build something awesome", done: true }
+      ]
+    }
+  }
+  
+  addNewItem = this.addNewItem.bind(this);
+  
+  addNewItem(item) {
+    this.setState({
+      items: [
+        ...this.state.items,
+        {text: item},
+      ]
+    })
+  }
+  
+  render() {
+    return (
+      <TodoForm addNewItem={this.addNewItem} items={this.state.items} />
+    )
+  }
+}
+
+ReactDOM.render(<TodoApp />, document.querySelector("#app"))
+
