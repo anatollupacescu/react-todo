@@ -1,28 +1,3 @@
-'use strict' 
-class TodoObject {
-
-  constructor(existingItems) {
-    this.items = []
-    if (existingItems) {
-      this.items = existingItems
-    }
-   }
-   
-   addItem(itemText) { 
-      this.items.push({ text: itemText})
-   }
-   
-   toggleItemDoneStatus(item) {
-    let updatedItems = this.items.map(i => {
-      if (item.text === i.text) {
-        return { text: i.text, done: !i.done}
-      }
-      return i
-    })
-    
-    this.items = updatedItems
-   }
-}
 
 class TodoItem extends React.Component {
   
@@ -101,21 +76,3 @@ class TodoForm extends React.Component {
     )
   }
 }
-
-class TodoApp extends React.Component {
-  
-  render() {
-    const items = [
-      { text: "Learn JavaScript", done: false },
-      { text: "Learn React", done: false },
-      { text: "Play around in JSFiddle", done: true },
-      { text: "Build something awesome", done: true }
-    ]
-    const todoObject = new TodoObject(items)
-    return (
-      <TodoForm todoObject={todoObject} />
-    )
-  }
-}
-
-ReactDOM.render(<TodoApp />, document.querySelector("#app"))
