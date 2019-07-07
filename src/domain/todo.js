@@ -1,10 +1,8 @@
-'use strict' 
 class TodoObject {
-
   constructor(existingItems) {
-    this.items = []
+    this.items = [];
     if (existingItems) {
-      this.items = existingItems
+      this.items = existingItems;
     }
    }
    
@@ -24,4 +22,4 @@ class TodoObject {
    }
 }
 
-export default TodoObject
+export default TodoObject;
