@@ -16,7 +16,12 @@ class TodoForm extends React.Component {
   submitForm(e) {
     e.preventDefault();
     if(e.keyCode === 13) { /* Enter key pressed */
-      this.props.todoObject.addItem(this.state.inputValue);
+      let text = this.state.inputValue
+      let added = this.props.todoObject.addItem(text);
+      if (!added) {
+        alert('we got a duplicate!')
+        return
+      }
       this.setState({
         inputValue: ''
       });
@@ -38,7 +43,14 @@ class TodoForm extends React.Component {
       <div>
         <h2>Todos:</h2>
         <ol>
-          {todoObject.items.map((item, id) => (<TodoItem key={id} item={item} todoObject={todoObject} triggerRender={this.triggerRender} />))}
+          {todoObject.items.map((item, i) => (
+            <div key={i}>
+              <TodoItem
+                item={item}
+                todoObject={todoObject}
+                triggerRender={this.triggerRender} />
+            </div>
+          ))}
         </ol>
       </div>
     </div>);

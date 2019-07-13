@@ -14,8 +14,13 @@ class TodoObject {
     }
   }
 
-  addItem(itemText: string) {
-    this.items.push({ text: itemText, done: false })
+  addItem(itemText: string): boolean {
+    let existingItem = this.items.find(item => item.text === itemText)
+    if(!existingItem) {
+      this.items.push({ text: itemText, done: false })
+      return true
+    }
+    return false
   }
 
   toggleItemDoneStatus(item: Item) {

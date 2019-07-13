@@ -11,9 +11,9 @@ class TodoItem extends React.Component {
   }
 
   render() {
-    let { item, key } = this.props;
+    let { item } = this.props;
     let className = item.done ? "done" : "";
-    return (<li key={key}>
+    return (<li>
       <label>
         <input type="checkbox" defaultChecked={item.done} onChange={this.boxTicked} />
         <span className={className}>{item.text}</span>
