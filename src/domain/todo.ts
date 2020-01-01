@@ -23,7 +23,7 @@ class TodoObject {
     return false
   }
 
-  toggleItemDoneStatus(item: Item) {
+  toggleDone(item: Item) {
     let updatedItems = this.items.map(original => {
       if(item.text === original.text) {
         return { text: original.text, done: !original.done }

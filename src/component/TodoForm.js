@@ -1,60 +1,48 @@
 import React from 'react';
+import { useState } from 'react';
 import TodoItem from './TodoItem';
 
-class TodoForm extends React.Component {
-  state = { inputValue: '' };
+export default function TodoForm(props) {
   
-  handleChange = this.handleChange.bind(this);
-  handleChange(e) {
+  let { todoObject } = props;
+  let [inputValue, setInput] = useState("");
+
+  let handleChange = (e) => {
     e.preventDefault();
-    this.setState({
-      inputValue: e.target.value
-    });
+    setInput(e.target.value);
   }
 
-  submitForm = this.submitForm.bind(this);
-  submitForm(e) {
+  let submitForm = (e) => {
     e.preventDefault();
-    if(e.keyCode === 13) { /* Enter key pressed */
-      let text = this.state.inputValue
-      let added = this.props.todoObject.addItem(text);
+    if (e.keyCode === 13) { /* Enter key pressed */
+      let added = todoObject.addItem(inputValue);
       if (!added) {
         alert('we got a duplicate!')
         return
       }
-      this.setState({
-        inputValue: ''
-      });
+      setInput("")
     }
   }
-
-  triggerRender = this.triggerRender.bind(this);
-  triggerRender() {
-    this.setState(this.state);
-  }
   
-  render() {
-    const { todoObject } = this.props;
-    return (<div>
-      <h3>New item</h3>
-      <div>
-        <input type="text" onKeyUp={this.submitForm} onChange={this.handleChange} value={this.state.inputValue} />
-      </div>
-      <div>
-        <h2>Todos:</h2>
-        <ol>
-          {todoObject.items.map((item, i) => (
-            <div key={i}>
-              <TodoItem
-                item={item}
-                todoObject={todoObject}
-                triggerRender={this.triggerRender} />
-            </div>
-          ))}
-        </ol>
-      </div>
-    </div>);
-  }
-}
+  let [count, setCount] = useState(0) // to allow updates in child component to re-render parent
 
-export default TodoForm;
+  return (<div>
+    <h3>New item</h3>
+    <div>
+      <input type="text" onKeyUp={submitForm} onChange={handleChange} value={inputValue} />
+    </div>
+    <div>
+      <h2>Todos:</h2>
+      <ol>
+        {todoObject.items.map((item, i) => (
+          <div key={i}>
+            <TodoItem
+              item={item}
+              todoObject={todoObject}
+              triggerRender={() => setCount(count + 1)} />
+          </div>
+        ))}
+      </ol>
+    </div>
+  </div>);
+}

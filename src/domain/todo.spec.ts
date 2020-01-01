@@ -49,7 +49,7 @@ describe('given a ToDo object with an active item', () => {
 
     describe('when the item is marked as done', () => {
 
-        obj.toggleItemDoneStatus(got)
+        obj.toggleDone(got)
 
         it('should update item "done" status', () => {
             let got = obj.items[0];

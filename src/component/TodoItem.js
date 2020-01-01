@@ -1,25 +1,20 @@
 import React from 'react';
 
-class TodoItem extends React.Component {
+export default function TodoItem(props) {
 
-  boxTicked = this.boxTicked.bind(this);
+  let { todoObject, item, triggerRender } = props;
 
-  boxTicked() {
-    let { todoObject, item, triggerRender } = this.props;
-    todoObject.toggleItemDoneStatus(item);
+  let boxTicked = () => {  
+    todoObject.toggleDone(item);
     triggerRender();
   }
 
-  render() {
-    let { item } = this.props;
-    let className = item.done ? "done" : "";
-    return (<li>
-      <label>
-        <input type="checkbox" defaultChecked={item.done} onChange={this.boxTicked} />
-        <span className={className}>{item.text}</span>
-      </label>
-    </li>);
-  }
-}
+  let className = item.done ? "done" : "";
 
-export default TodoItem;
+  return (<li>
+    <label>
+      <input type="checkbox" defaultChecked={item.done} onChange={boxTicked} />
+      <span className={className}>{item.text}</span>
+    </label>
+  </li>);
+}
